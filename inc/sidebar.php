@@ -1,4 +1,3 @@
-<!-- ===== SIDEBAR ===== -->
 <aside class="sidebar-right">
     <div class="sidebar-widget">
         <h3><i class="fas fa-newspaper"></i> Latest News</h3>
@@ -34,7 +33,7 @@
     <div class="sidebar-widget">
         <h3><i class="fas fa-info-circle"></i> Did You Know?</h3>
         <p style="font-size:14px; color:#4a5d72;">
-            Rwanda has a vibrant music scene with artists like Buravan, Meddy, and Bruce Melodie gaining international recognition.
+            Rwanda has a vibrant music scene with artists like Bruce Melodie, Element, Kivumbi King and Kevin Kade gaining international recognition.
         </p>
     </div>
 </aside>

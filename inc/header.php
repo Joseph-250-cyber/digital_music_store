@@ -9,18 +9,17 @@
   </head>
   <body>
 
-  <!-- ===== TOP BAR ===== -->
   <div class="top-bar">
       <div class="container">
           <div class="contact-info">
               <span><i class="fas fa-envelope"></i> info@musicstore.com</span>
-              <span><i class="fas fa-phone"></i> +250 791 591 773</span>
+              <span><i class="fas fa-phone"></i> +250 787 961 006</span>
           </div>
           <div class="social-links">
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-youtube"></i></a>
+              <a href="https://web.facebook.com/joseph.ndagijimana.735"><i class="fab fa-facebook"></i></a>
+              <a href="https://x.com/JosephNdag62835"><i class="fab fa-twitter"></i></a>
+              <a href="https://www.instagram.com/n__jeff/"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.youtube.com/@JosephNdagijimana-dt3ip"><i class="fab fa-youtube"></i></a>
           </div>
       </div>
   </div>

@@ -5,7 +5,6 @@ $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
 $user_name = isset($_SESSION['name']) ? $_SESSION['name'] : '';
 ?>
 
-<!-- ===== MAIN NAVIGATION ===== -->
 <nav class="main-nav">
     <div class="container">
         <a href="index.php" class="logo">
