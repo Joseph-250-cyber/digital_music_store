@@ -1,4 +1,5 @@
 <?php
+include("inc/session.php");
 include("inc/header.php");
 include("inc/menu.php");
 ?>
@@ -6,12 +7,18 @@ include("inc/menu.php");
 <!-- ===== MAIN CONTENT ===== -->
 <div class="main-wrapper">
     <div class="main-content" style="max-width:500px; margin:0 auto;">
-        <h1 style="text-align:center;">🔐 Login</h1>
-        <p class="page-intro" style="text-align:center;">Welcome back! Login to your account.</p>
+        <h1>🔐 Login</h1>
+        <p class="page-intro">Welcome back! Login to your account.</p>
 
         <?php if(isset($_GET['error'])) { ?>
             <div class="error-message">
                 <i class="fas fa-exclamation-circle"></i> <?php echo $_GET['error']; ?>
+            </div>
+        <?php } ?>
+
+        <?php if(isset($_GET['success'])) { ?>
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i> <?php echo $_GET['success']; ?>
             </div>
         <?php } ?>
 

@@ -1,4 +1,5 @@
 <?php
+include("inc/session.php");
 include("inc/header.php");
 include("inc/menu.php");
 ?>
@@ -6,8 +7,8 @@ include("inc/menu.php");
 <!-- ===== MAIN CONTENT ===== -->
 <div class="main-wrapper">
     <div class="main-content" style="max-width:550px; margin:0 auto;">
-        <h1 style="text-align:center;">📝 Create Account</h1>
-        <p class="page-intro" style="text-align:center;">Join the Digital Music Store community.</p>
+        <h1>📝 Create Account</h1>
+        <p class="page-intro">Join the Digital Music Store community.</p>
 
         <?php if(isset($_GET['error'])) { ?>
             <div class="error-message">

@@ -1,19 +1,10 @@
 <?php
+include("inc/session.php");
 include("inc/header.php");
 include("inc/menu.php");
 
-session_start();
-
-// Check if user is logged in and is an artist
-if(!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-if($_SESSION['role'] != 'artist') {
-    header("Location: index.php?error=Only artists can add music");
-    exit();
-}
+// Redirect if not an artist
+requireArtist();
 ?>
 
 <!-- ===== MAIN CONTENT ===== -->

@@ -1,6 +1,9 @@
 <?php
-session_start();
-session_destroy();
-header("Location: index.php");
+include("inc/session.php");
+
+// Use the logoutUser function from session.php
+logoutUser();
+
+header("Location: index.php?success=Logged out successfully");
 exit();
 ?>

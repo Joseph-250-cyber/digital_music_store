@@ -1,11 +1,11 @@
 <?php
+include("inc/session.php"); 
 include("inc/header.php");
 include("inc/menu.php");
 include("inc/connection.php");
 
-session_start();
-$is_logged_in = isset($_SESSION['user_id']);
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+$is_logged_in = isLoggedIn();
+$user_id = getUserId();
 
 // Fetch all music with creator info
 $sql = "SELECT music.*, users.name as creator_name, users.role as creator_role 
@@ -21,10 +21,22 @@ $result = mysqli_query($conn, $sql);
         <h1>🎵 Digital Music Store</h1>
         <p class="page-intro">Discover and manage your music collection</p>
 
-        <?php if($is_logged_in && $_SESSION['role'] == 'artist') { ?>
+        <?php if(isset($_GET['success'])) { ?>
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i> <?php echo $_GET['success']; ?>
+            </div>
+        <?php } ?>
+
+        <?php if(isset($_GET['error'])) { ?>
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i> <?php echo $_GET['error']; ?>
+            </div>
+        <?php } ?>
+
+        <?php if(isArtist()) { ?>
             <a href="register.php" class="btn-add"><i class="fas fa-plus"></i> Add New Music</a>
-        <?php } elseif($is_logged_in && $_SESSION['role'] == 'listener') { ?>
-            <p style="color:#4a5d72; margin:10px 0;">👋 Welcome, <?php echo $_SESSION['name']; ?>! You can browse all music here.</p>
+        <?php } elseif(isListener()) { ?>
+            <p style="color:#4a5d72; margin:10px 0;">👋 Welcome, <?php echo getUserName(); ?>! You can browse all music here.</p>
         <?php } else { ?>
             <p style="color:#4a5d72; margin:10px 0;">🔒 <a href="login.php" style="color:#0e7c7b; font-weight:600;">Login</a> as an Artist to add music.</p>
         <?php } ?>
@@ -44,7 +56,7 @@ $result = mysqli_query($conn, $sql);
                 </thead>
                 <tbody>
                     <?php while($row = mysqli_fetch_assoc($result)) { 
-                        $is_owner = ($is_logged_in && $row['user_id'] == $user_id);
+                        $is_owner = isLoggedIn() && $row['user_id'] == $user_id;
                     ?>
                         <tr>
                             <td>
@@ -67,12 +79,12 @@ $result = mysqli_query($conn, $sql);
                                 </span>
                             </td>
                             <td>
-                                <?php if($is_owner && $row['user_id'] == $user_id && $_SESSION['role'] == 'artist') { ?>
+                                <?php if($is_owner && isArtist()) { ?>
                                     <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit"><i class="fas fa-edit"></i> Edit</a>
                                     <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete" onclick="return confirm('Are you sure you want to delete this music?')"><i class="fas fa-trash"></i> Delete</a>
-                                <?php } elseif($is_logged_in && $_SESSION['role'] == 'artist') { ?>
+                                <?php } elseif(isArtist()) { ?>
                                     <span style="color:#999; font-size:13px;">🔒 Owned by <?php echo $row['creator_name']; ?></span>
-                                <?php } elseif($is_logged_in && $_SESSION['role'] == 'listener') { ?>
+                                <?php } elseif(isListener()) { ?>
                                     <span style="color:#999; font-size:13px;">🎧 Listen Only</span>
                                 <?php } else { ?>
                                     <span style="color:#999; font-size:13px;">🔒 Login to manage</span>
@@ -85,7 +97,7 @@ $result = mysqli_query($conn, $sql);
         <?php } else { ?>
             <p style="text-align:center; padding:40px 0; color:#4a5d72;">
                 🎵 No music added yet. 
-                <?php if($is_logged_in && $_SESSION['role'] == 'artist') { ?>
+                <?php if(isArtist()) { ?>
                     <a href="register.php" style="color:#0e7c7b; font-weight:600;">Add your first music!</a>
                 <?php } else { ?>
                     Be the first to <a href="login.php" style="color:#0e7c7b; font-weight:600;">Login</a> as an Artist and add music.
