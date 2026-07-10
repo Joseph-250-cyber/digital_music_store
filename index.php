@@ -1,8 +1,7 @@
 <?php
-include("inc/session.php"); 
-include("inc/header.php");
-include("inc/menu.php");
-include("inc/connection.php");
+require_once("inc/session.php");
+require_once("inc/header.php");
+require_once("inc/connection.php");
 
 $is_logged_in = isLoggedIn();
 $user_id = getUserId();
@@ -15,12 +14,77 @@ $sql = "SELECT music.*, users.name as creator_name, users.role as creator_role
 $result = mysqli_query($conn, $sql);
 ?>
 
-<!-- ===== MAIN CONTENT ===== -->
-<div class="main-wrapper">
-    <div class="main-content">
-        <h1>🎵 Digital Music Store</h1>
-        <p class="page-intro">Discover and manage your music collection</p>
+<!-- ============================================================ -->
+<!-- APPLE MUSIC STYLE LAYOUT -->
+<!-- ============================================================ -->
 
+<div class="app-container">
+
+    <!-- ===== LEFT SIDEBAR (Apple Music Style) ===== -->
+    <aside class="sidebar-left">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🎵</span>
+            <span class="logo-text">Music Store</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.php" class="active"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                <li><a href="#"><i class="fas fa-compact-disc"></i> <span>New</span></a></li>
+                <li><a href="#"><i class="fas fa-fire"></i> <span>Trending</span></a></li>
+                <li><a href="#"><i class="fas fa-chart-bar"></i> <span>Charts</span></a></li>
+                <li><a href="#"><i class="fas fa-heart"></i> <span>Favorites</span></a></li>
+                <li><a href="#"><i class="fas fa-microphone"></i> <span>Artists</span></a></li>
+                <li><a href="#"><i class="fas fa-folder"></i> <span>Playlists</span></a></li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-divider"></div>
+
+        <nav class="sidebar-nav">
+            <ul>
+                <?php if(isArtist()) { ?>
+                    <li><a href="register.php"><i class="fas fa-plus-circle"></i> <span>Add Music</span></a></li>
+                <?php } ?>
+                <li><a href="about.php"><i class="fas fa-info-circle"></i> <span>About</span></a></li>
+                <li><a href="contact.php"><i class="fas fa-envelope"></i> <span>Contact</span></a></li>
+                <li><a href="services.php"><i class="fas fa-cogs"></i> <span>Services</span></a></li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- User Section -->
+        <div class="sidebar-user">
+            <?php if($is_logged_in) { ?>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <div>
+                        <span class="user-name"><?php echo getUserName(); ?></span>
+                        <span class="user-role"><?php echo ucfirst(getUserRole()); ?></span>
+                    </div>
+                </div>
+                <a href="logout.php" class="btn-logout-sidebar"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <?php } else { ?>
+                <a href="login.php" class="btn-login-sidebar"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="register_user.php" class="btn-register-sidebar"><i class="fas fa-user-plus"></i> Register</a>
+            <?php } ?>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content-area">
+
+        <!-- Top Bar with Search -->
+        <div class="content-topbar">
+            <h1>Home</h1>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search for music, artists...">
+            </div>
+        </div>
+
+        <!-- Success/Error Messages -->
         <?php if(isset($_GET['success'])) { ?>
             <div class="success-message">
                 <i class="fas fa-check-circle"></i> <?php echo $_GET['success']; ?>
@@ -33,79 +97,98 @@ $result = mysqli_query($conn, $sql);
             </div>
         <?php } ?>
 
-        <?php if(isArtist()) { ?>
-            <a href="register.php" class="btn-add"><i class="fas fa-plus"></i> Add New Music</a>
-        <?php } elseif(isListener()) { ?>
-            <p style="color:#4a5d72; margin:10px 0;">👋 Welcome, <?php echo getUserName(); ?>! You can browse all music here.</p>
-        <?php } else { ?>
-            <p style="color:#4a5d72; margin:10px 0;">🔒 <a href="login.php" style="color:#0e7c7b; font-weight:600;">Login</a> as an Artist to add music.</p>
-        <?php } ?>
+        <!-- ===== FEATURED SECTION (Apple Music Style) ===== -->
+        <div class="featured-section">
+            <div class="featured-card">
+                <div class="featured-content">
+                    <span class="featured-badge">🔥 NEW ALBUM</span>
+                    <h2>The Rolling Stones</h2>
+                    <p>Mick, Ronnie, and Keith give an exclusive look at their 25th album.</p>
+                    <a href="#" class="btn-featured">Listen Now</a>
+                </div>
+                <div class="featured-image">
+                    <span style="font-size:80px;">🎸</span>
+                </div>
+            </div>
+        </div>
 
-        <?php if(mysqli_num_rows($result) > 0) { ?>
-            <table class="music-table">
-                <thead>
-                    <tr>
-                        <th>Cover</th>
-                        <th>Title</th>
-                        <th>Artist</th>
-                        <th>Genre</th>
-                        <th>Price</th>
-                        <th>Added By</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while($row = mysqli_fetch_assoc($result)) { 
-                        $is_owner = isLoggedIn() && $row['user_id'] == $user_id;
-                    ?>
-                        <tr>
-                            <td>
-                                <?php if(!empty($row['cover_image'])) { ?>
-                                    <img src="images/<?php echo $row['cover_image']; ?>" alt="Cover" class="cover-img">
-                                <?php } else { ?>
-                                    <img src="images/default-cover.jpg" alt="No Cover" class="cover-img">
-                                <?php } ?>
-                            </td>
-                            <td><strong><?php echo $row['title']; ?></strong></td>
-                            <td><?php echo $row['artist']; ?></td>
-                            <td><span class="genre-badge"><?php echo $row['genre']; ?></span></td>
-                            <td>$<?php echo number_format($row['price'], 2); ?></td>
-                            <td>
-                                <span class="creator-name">
-                                    <?php echo $row['creator_name']; ?>
-                                    <?php if($row['creator_role'] == 'artist') { ?>
-                                        <i class="fas fa-check-circle" style="color:#0e7c7b; font-size:12px;" title="Verified Artist"></i>
-                                    <?php } ?>
-                                </span>
-                            </td>
-                            <td>
-                                <?php if($is_owner && isArtist()) { ?>
-                                    <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit"><i class="fas fa-edit"></i> Edit</a>
-                                    <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete" onclick="return confirm('Are you sure you want to delete this music?')"><i class="fas fa-trash"></i> Delete</a>
-                                <?php } elseif(isArtist()) { ?>
-                                    <span style="color:#999; font-size:13px;">🔒 Owned by <?php echo $row['creator_name']; ?></span>
-                                <?php } elseif(isListener()) { ?>
-                                    <span style="color:#999; font-size:13px;">🎧 Listen Only</span>
-                                <?php } else { ?>
-                                    <span style="color:#999; font-size:13px;">🔒 Login to manage</span>
-                                <?php } ?>
-                            </td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        <?php } else { ?>
-            <p style="text-align:center; padding:40px 0; color:#4a5d72;">
-                🎵 No music added yet. 
+        <!-- ===== LATEST RELEASES GRID ===== -->
+        <section class="music-section">
+            <div class="section-header">
+                <h2>Latest Releases</h2>
                 <?php if(isArtist()) { ?>
-                    <a href="register.php" style="color:#0e7c7b; font-weight:600;">Add your first music!</a>
-                <?php } else { ?>
-                    Be the first to <a href="login.php" style="color:#0e7c7b; font-weight:600;">Login</a> as an Artist and add music.
+                    <a href="register.php" class="btn-add-sm"><i class="fas fa-plus"></i> Add Music</a>
                 <?php } ?>
-            </p>
-        <?php } ?>
-    </div>
-    <?php include("inc/sidebar.php"); ?>
+                <a href="#" class="view-all">View All →</a>
+            </div>
+
+            <div class="music-grid">
+                <?php if(mysqli_num_rows($result) > 0) { ?>
+                    <?php while($row = mysqli_fetch_assoc($result)) { 
+                        $is_owner = ($is_logged_in && $row['user_id'] == $user_id);
+                    ?>
+                        <div class="music-card">
+                            <div class="music-cover">
+                                <?php if(!empty($row['cover_image'])) { ?>
+                                    <img src="images/<?php echo $row['cover_image']; ?>" alt="<?php echo $row['title']; ?>">
+                                <?php } else { ?>
+                                    <img src="images/default-cover.jpg" alt="No Cover">
+                                <?php } ?>
+                                <button class="play-btn"><i class="fas fa-play"></i></button>
+                            </div>
+                            <div class="music-info">
+                                <h4><?php echo $row['title']; ?></h4>
+                                <p><?php echo $row['artist']; ?></p>
+                                <div class="music-meta">
+                                    <span class="genre-badge"><?php echo $row['genre']; ?></span>
+                                    <span class="music-price">$<?php echo number_format($row['price'], 2); ?></span>
+                                </div>
+                                <div class="music-actions">
+                                    <?php if($is_owner && isArtist()) { ?>
+                                        <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit-sm"><i class="fas fa-edit"></i> Edit</a>
+                                        <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete-sm" onclick="return confirm('Delete this music?')"><i class="fas fa-trash"></i> Delete</a>
+                                    <?php } elseif(isArtist()) { ?>
+                                        <span class="owner-label">🎵 <?php echo $row['creator_name']; ?></span>
+                                    <?php } elseif(isListener()) { ?>
+                                        <span class="listen-label">🎧 Listen</span>
+                                    <?php } else { ?>
+                                        <span class="login-label">🔒 <a href="login.php" style="color:#f0a500;">Login</a></span>
+                                    <?php } ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                <?php } else { ?>
+                    <div class="empty-state">
+                        <p>🎵 No music added yet.</p>
+                        <?php if(isArtist()) { ?>
+                            <a href="register.php" class="btn-add">Add your first music!</a>
+                        <?php } else { ?>
+                            <a href="login.php" class="btn-add">Login as Artist to add music</a>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+            </div>
+        </section>
+
+        <!-- ===== GENRE QUICK LINKS ===== -->
+        <section class="genre-section">
+            <div class="section-header">
+                <h2>Browse by Genre</h2>
+            </div>
+            <div class="genre-tags">
+                <a href="#" class="genre-tag">Afrobeat</a>
+                <a href="#" class="genre-tag">Gospel</a>
+                <a href="#" class="genre-tag">Hip-Hop</a>
+                <a href="#" class="genre-tag">R&B</a>
+                <a href="#" class="genre-tag">Jazz</a>
+                <a href="#" class="genre-tag">Electronic</a>
+                <a href="#" class="genre-tag">Rock</a>
+                <a href="#" class="genre-tag">Traditional</a>
+            </div>
+        </section>
+
+    </main>
 </div>
 
-<?php include("inc/footer.php"); ?>
+<?php require_once("inc/footer.php"); ?>
