@@ -19,10 +19,17 @@ include("inc/session.php");
             <li><a href="about.php">About</a></li>
             <li><a href="contact.php">Contact</a></li>
             <li><a href="services.php">Services</a></li>
+
+            <?php if(isAdmin()) { ?>
+                <li><a href="view_messages.php" class="admin-link"><i class="fas fa-envelope"></i> Messages</a></li>
+            <?php } ?>
             
             <?php if(isLoggedIn()) { ?>
                 <li class="user-info">
-                    <span><i class="fas fa-user"></i> <?php echo getUserName(); ?> (<?php echo ucfirst(getUserRole()); ?>)</span>
+                    <span><i class="fas fa-user"></i> <?php echo getUserName(); ?> 
+                        (<?php echo ucfirst(getUserRole()); ?>
+                        <?php if(isAdmin()) { ?> 👑<?php } ?>)
+                    </span>
                 </li>
                 <li><a href="logout.php" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             <?php } else { ?>

@@ -89,6 +89,22 @@ if($row['user_id'] != getUserId()) {
                 <p style="font-size:12px; color:#999; margin-top:5px;">Leave empty to keep current image. Allowed: JPG, PNG, GIF</p>
             </div>
 
+            <!-- ===== AUDIO FILE (NEW - OPTIONAL) ===== -->
+            <div class="form-group">
+                <?php if(!empty($row['audio_file'])) { ?>
+                    <p>Current Audio: <strong style="color:#0e7c7b;">🎵 <?php echo $row['audio_file']; ?></strong></p>
+                    <audio controls style="width:100%; height:40px; margin-top:5px;">
+                        <source src="audio/<?php echo $row['audio_file']; ?>" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                <?php } else { ?>
+                    <p style="color:#999;">No audio currently uploaded.</p>
+                <?php } ?>
+                <label for="audio_file"><i class="fas fa-music"></i> Change Audio File <span style="color:#999; font-weight:normal;">(Optional)</span>:</label>
+                <input type="file" id="audio_file" name="audio_file" accept=".mp3,.wav,.ogg">
+                <p style="font-size:12px; color:#999; margin-top:5px;">Leave empty to keep current audio. Allowed: MP3, WAV, OGG (Max 10MB)</p>
+            </div>
+
             <div class="form-group">
                 <label for="release_date"><i class="fas fa-calendar"></i> Release Date:</label>
                 <input type="date" id="release_date" name="release_date" value="<?php echo $row['release_date']; ?>">

@@ -44,6 +44,7 @@ include("inc/menu.php");
                     <option value="listener">🎧 Listener (Browse music)</option>
                     <option value="artist">🎤 Artist (Add & manage music)</option>
                 </select>
+                <p style="font-size:12px; color:#999; margin-top:5px;">Admin accounts are created by system administrators.</p>
             </div>
 
             <button type="submit" class="btn-submit" style="width:100%;"><i class="fas fa-user-plus"></i> Create Account</button>

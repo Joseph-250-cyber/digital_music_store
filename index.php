@@ -143,6 +143,19 @@ $result = mysqli_query($conn, $sql);
                                     <span class="genre-badge"><?php echo $row['genre']; ?></span>
                                     <span class="music-price">$<?php echo number_format($row['price'], 2); ?></span>
                                 </div>
+                                <!-- ===== AUDIO PLAYER (OPTIONAL - Only shows if audio exists) ===== -->
+                                <?php if(!empty($row['audio_file'])) { ?>
+                                    <div class="audio-player-wrapper">
+                                        <audio controls style="width:100%; height:30px; margin-top:8px;">
+                                            <source src="audio/<?php echo $row['audio_file']; ?>" type="audio/mpeg">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    </div>
+                                <?php } else { ?>
+                                    <div class="no-audio" style="margin-top:8px; font-size:11px; color:#666;">
+                                        <i class="fas fa-music"></i> No audio uploaded
+                                    </div>
+                                <?php } ?>
                                 <div class="music-actions">
                                     <?php if($is_owner && isArtist()) { ?>
                                         <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit-sm"><i class="fas fa-edit"></i> Edit</a>

@@ -138,5 +138,23 @@ function requireListener() {
     }
 }
 
+/**
+ * Check if user is an Admin
+ */
+function isAdmin() {
+    return isLoggedIn() && getUserRole() == 'admin';
+}
+
+/**
+ * Redirect if not an Admin
+ */
+function requireAdmin() {
+    requireLogin();
+    if (!isAdmin()) {
+        header("Location: index.php?error=Access denied. Admin only.");
+        exit();
+    }
+}
+
 } // END: if (!defined('SESSION_PHP_LOADED'))
 ?>

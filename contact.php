@@ -9,6 +9,21 @@ include("inc/menu.php");
         <h1>📞 Contact Us</h1>
         <p class="page-intro">We'd love to hear from you! Reach out to us through any of the channels below.</p>
 
+        <!-- ============================================================ -->
+        <!-- SUCCESS/ERROR MESSAGES - ADD THIS SECTION -->
+        <!-- ============================================================ -->
+        <?php if(isset($_GET['success'])) { ?>
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($_GET['success']); ?>
+            </div>
+        <?php } ?>
+
+        <?php if(isset($_GET['error'])) { ?>
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($_GET['error']); ?>
+            </div>
+        <?php } ?>
+
         <div class="contact-item">
             <i class="fas fa-map-marker-alt"></i>
             <div>
@@ -50,7 +65,7 @@ include("inc/menu.php");
         </div>
 
         <h3 style="margin-top:30px; color:#0a2a2a;">Send Us a Message</h3>
-        <form action="#" method="post">
+        <form action="save_message.php" method="post">
             <div class="form-group">
                 <label for="name"><i class="fas fa-user"></i> Your Name:</label>
                 <input type="text" id="name" name="name" placeholder="Enter your full name" required>

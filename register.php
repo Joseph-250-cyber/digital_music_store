@@ -68,6 +68,12 @@ requireArtist();
                 <input type="file" id="cover_image" name="cover_image" accept="image/*">
                 <p style="font-size:12px; color:#999; margin-top:5px;">Allowed: JPG, PNG, GIF (Max 5MB)</p>
             </div>
+            <!-- ===== AUDIO FILE (NEW - OPTIONAL) ===== -->
+            <div class="form-group">
+                <label for="audio_file"><i class="fas fa-music"></i> Audio File <span style="color:#999; font-weight:normal;">(Optional)</span>:</label>
+                <input type="file" id="audio_file" name="audio_file" accept=".mp3,.wav,.ogg">
+                <p style="font-size:12px; color:#999; margin-top:5px;">Upload the actual music file (optional). Allowed: MP3, WAV, OGG (Max 10MB)</p>
+            </div>
 
             <div class="form-group">
                 <label for="release_date"><i class="fas fa-calendar"></i> Release Date:</label>
