@@ -76,21 +76,6 @@ document.addEventListener('click', function(event) {
 
 
 // ============================================================
-// 3. KEYBOARD SHORTCUT: Press 'C' to change color
-// ============================================================
-
-document.addEventListener('keydown', function(event) {
-    // If 'c' key is pressed (or 'C')
-    if (event.key === 'c' || event.key === 'C') {
-        // Don't trigger if typing in an input
-        if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
-            changeBackgroundColor();
-        }
-    }
-});
-
-
-// ============================================================
 // 4. PLAY BUTTON HOVER EFFECT (Apple Music Style)
 // ============================================================
 
