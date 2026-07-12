@@ -3,8 +3,18 @@ require_once("inc/session.php");
 require_once("inc/header.php");
 require_once("inc/connection.php");
 
+// Make sure session is started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $is_logged_in = isLoggedIn();
 $user_id = getUserId();
+$user_role = getUserRole();
+
+// Debug - remove after testing
+// echo "Logged In: " . ($is_logged_in ? 'Yes' : 'No') . "<br>";
+// echo "Role: " . ($user_role ? $user_role : 'None') . "<br>";
 
 // Fetch all music with creator info
 $sql = "SELECT music.*, users.name as creator_name, users.role as creator_role 
@@ -15,9 +25,8 @@ $result = mysqli_query($conn, $sql);
 ?>
 
 <!-- ============================================================ -->
-<!-- APPLE MUSIC STYLE LAYOUT -->
+<!-- APP CONTAINER - WRAPS SIDEBAR + MAIN CONTENT -->
 <!-- ============================================================ -->
-
 <div class="app-container">
 
     <!-- ===== LEFT SIDEBAR (Apple Music Style) ===== -->
@@ -43,7 +52,7 @@ $result = mysqli_query($conn, $sql);
 
         <nav class="sidebar-nav">
             <ul>
-                <?php if(isArtist()) { ?>
+                <?php if(isArtist() || isAdmin()) { ?>
                     <li><a href="register.php"><i class="fas fa-plus-circle"></i> <span>Add Music</span></a></li>
                 <?php } ?>
                 <li><a href="about.php"><i class="fas fa-info-circle"></i> <span>About</span></a></li>
@@ -51,6 +60,18 @@ $result = mysqli_query($conn, $sql);
                 <li><a href="services.php"><i class="fas fa-cogs"></i> <span>Services</span></a></li>
             </ul>
         </nav>
+
+        <!-- ============================================================ -->
+        <!-- ADMIN MESSAGES LINK - Only visible to Admin -->
+        <!-- ============================================================ -->
+        <?php if(isAdmin()) { ?>
+            <div class="sidebar-divider"></div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="view_messages.php" style="color:#f0a500;"><i class="fas fa-envelope"></i> <span>📩 Messages</span></a></li>
+                </ul>
+            </nav>
+        <?php } ?>
 
         <div class="sidebar-divider"></div>
 
@@ -61,7 +82,10 @@ $result = mysqli_query($conn, $sql);
                     <i class="fas fa-user-circle"></i>
                     <div>
                         <span class="user-name"><?php echo getUserName(); ?></span>
-                        <span class="user-role"><?php echo ucfirst(getUserRole()); ?></span>
+                        <span class="user-role">
+                            <?php echo ucfirst(getUserRole()); ?>
+                            <?php if(isAdmin()) { ?> 👑<?php } ?>
+                        </span>
                     </div>
                 </div>
                 <a href="logout.php" class="btn-logout-sidebar"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -87,17 +111,17 @@ $result = mysqli_query($conn, $sql);
         <!-- Success/Error Messages -->
         <?php if(isset($_GET['success'])) { ?>
             <div class="success-message">
-                <i class="fas fa-check-circle"></i> <?php echo $_GET['success']; ?>
+                <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($_GET['success']); ?>
             </div>
         <?php } ?>
 
         <?php if(isset($_GET['error'])) { ?>
             <div class="error-message">
-                <i class="fas fa-exclamation-circle"></i> <?php echo $_GET['error']; ?>
+                <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($_GET['error']); ?>
             </div>
         <?php } ?>
 
-        <!-- ===== FEATURED SECTION (Apple Music Style) ===== -->
+        <!-- ===== FEATURED SECTION ===== -->
         <div class="featured-section">
             <div class="featured-card">
                 <div class="featured-content">
@@ -116,7 +140,7 @@ $result = mysqli_query($conn, $sql);
         <section class="music-section">
             <div class="section-header">
                 <h2>Latest Releases</h2>
-                <?php if(isArtist()) { ?>
+                <?php if(isArtist() || isAdmin()) { ?>
                     <a href="register.php" class="btn-add-sm"><i class="fas fa-plus"></i> Add Music</a>
                 <?php } ?>
                 <a href="#" class="view-all">View All →</a>
@@ -143,7 +167,7 @@ $result = mysqli_query($conn, $sql);
                                     <span class="genre-badge"><?php echo $row['genre']; ?></span>
                                     <span class="music-price">$<?php echo number_format($row['price'], 2); ?></span>
                                 </div>
-                                <!-- ===== AUDIO PLAYER (OPTIONAL - Only shows if audio exists) ===== -->
+                                <!-- ===== AUDIO PLAYER ===== -->
                                 <?php if(!empty($row['audio_file'])) { ?>
                                     <div class="audio-player-wrapper">
                                         <audio controls style="width:100%; height:30px; margin-top:8px;">
@@ -156,15 +180,27 @@ $result = mysqli_query($conn, $sql);
                                         <i class="fas fa-music"></i> No audio uploaded
                                     </div>
                                 <?php } ?>
+                                
+                                <!-- ============================================================ -->
+                                <!-- MUSIC ACTIONS - FIXED FOR ADMIN -->
+                                <!-- ============================================================ -->
                                 <div class="music-actions">
-                                    <?php if($is_owner && isArtist()) { ?>
+                                    <?php if(isAdmin()) { ?>
+                                        <!-- ===== ADMIN: Can edit/delete ANY music ===== -->
+                                        <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit-sm"><i class="fas fa-edit"></i> Edit</a>
+                                        <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete-sm" onclick="return confirm('Delete this music?')"><i class="fas fa-trash"></i> Delete</a>
+                                    <?php } elseif($is_owner && isArtist()) { ?>
+                                        <!-- ===== ARTIST: Can edit/delete own music ===== -->
                                         <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit-sm"><i class="fas fa-edit"></i> Edit</a>
                                         <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete-sm" onclick="return confirm('Delete this music?')"><i class="fas fa-trash"></i> Delete</a>
                                     <?php } elseif(isArtist()) { ?>
+                                        <!-- ===== ARTIST: View others' music ===== -->
                                         <span class="owner-label">🎵 <?php echo $row['creator_name']; ?></span>
                                     <?php } elseif(isListener()) { ?>
+                                        <!-- ===== LISTENER: Listen only ===== -->
                                         <span class="listen-label">🎧 Listen</span>
                                     <?php } else { ?>
+                                        <!-- ===== NOT LOGGED IN: Show login link ===== -->
                                         <span class="login-label">🔒 <a href="login.php" style="color:#f0a500;">Login</a></span>
                                     <?php } ?>
                                 </div>
@@ -174,7 +210,7 @@ $result = mysqli_query($conn, $sql);
                 <?php } else { ?>
                     <div class="empty-state">
                         <p>🎵 No music added yet.</p>
-                        <?php if(isArtist()) { ?>
+                        <?php if(isArtist() || isAdmin()) { ?>
                             <a href="register.php" class="btn-add">Add your first music!</a>
                         <?php } else { ?>
                             <a href="login.php" class="btn-add">Login as Artist to add music</a>
@@ -202,6 +238,8 @@ $result = mysqli_query($conn, $sql);
         </section>
 
     </main>
+
 </div>
+<!-- ===== END APP CONTAINER ===== -->
 
 <?php require_once("inc/footer.php"); ?>

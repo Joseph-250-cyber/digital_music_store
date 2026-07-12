@@ -1,11 +1,11 @@
 <?php
-include("inc/session.php");
-include("inc/header.php");
-include("inc/menu.php");
-include("inc/connection.php");
+require_once("inc/session.php");
+require_once("inc/header.php");
+require_once("inc/menu.php");
+require_once("inc/connection.php");
 
-// Redirect if not an artist
-requireArtist();
+// Redirect if not logged in
+requireLogin();
 
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
@@ -14,7 +14,7 @@ if(!$id) {
     exit();
 }
 
-// Check if user owns this music
+// Check if music exists
 $check_sql = "SELECT * FROM music WHERE id = $id";
 $check_result = mysqli_query($conn, $check_sql);
 $row = mysqli_fetch_assoc($check_result);
@@ -24,7 +24,10 @@ if(!$row) {
     exit();
 }
 
-if($row['user_id'] != getUserId()) {
+// ============================================================
+// ADMIN CAN EDIT ANY MUSIC, OTHERS ONLY THEIR OWN
+// ============================================================
+if(!isAdmin() && $row['user_id'] != getUserId()) {
     header("Location: index.php?error=You don't own this music");
     exit();
 }
@@ -89,7 +92,6 @@ if($row['user_id'] != getUserId()) {
                 <p style="font-size:12px; color:#999; margin-top:5px;">Leave empty to keep current image. Allowed: JPG, PNG, GIF</p>
             </div>
 
-            <!-- ===== AUDIO FILE (NEW - OPTIONAL) ===== -->
             <div class="form-group">
                 <?php if(!empty($row['audio_file'])) { ?>
                     <p>Current Audio: <strong style="color:#0e7c7b;">🎵 <?php echo $row['audio_file']; ?></strong></p>

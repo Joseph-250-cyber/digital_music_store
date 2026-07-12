@@ -1,9 +1,9 @@
 <?php
-include("inc/session.php");
-include("inc/connection.php");
+require_once("inc/session.php");
+require_once("inc/connection.php");
 
-// Redirect if not an artist
-requireArtist();
+// Redirect if not logged in
+requireLogin();
 
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
@@ -22,13 +22,16 @@ if(!$check_row) {
     exit();
 }
 
-if($check_row['user_id'] != getUserId()) {
+// ============================================================
+// ADMIN CAN DELETE ANY MUSIC, OTHERS ONLY THEIR OWN
+// ============================================================
+if(!isAdmin() && $check_row['user_id'] != getUserId()) {
     header("Location: index.php?error=You don't own this music");
     exit();
 }
 
 // Delete the music
-$sql = "DELETE FROM music WHERE id = $id AND user_id = " . getUserId();
+$sql = "DELETE FROM music WHERE id = $id";
 
 if(mysqli_query($conn, $sql)) {
     header("Location: index.php?success=Music deleted successfully");
