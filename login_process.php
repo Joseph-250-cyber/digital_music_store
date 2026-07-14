@@ -25,6 +25,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: login.php?error=Invalid password");
             exit();
         }
+                // After verifying password
+        if(password_verify($password, $row['password'])) {
+            
+            // ============================================================
+            // CHECK IF USER IS BLOCKED
+            // ============================================================
+            if($row['status'] == 'blocked') {
+                header("Location: login.php?error=Your account has been blocked. Please contact admin.");
+                exit();
+            }
+            
+            // Login successful
+            loginUser($row['id'], $row['name'], $row['email'], $row['role']);
+            header("Location: index.php?success=Welcome back, " . $row['name'] . "!");
+            exit();
+        }
     } else {
         header("Location: login.php?error=Email not found");
         exit();

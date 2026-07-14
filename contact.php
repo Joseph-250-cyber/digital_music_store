@@ -36,7 +36,7 @@ include("inc/menu.php");
             <i class="fas fa-phone-alt"></i>
             <div>
                 <h4>Phone</h4>
-                <p><a href="tel:+250791591773">+250 791 591 773</a></p>
+                <p><a href="tel:+250788504578">+250 788 504 578</a></p>
             </div>
         </div>
 
@@ -52,7 +52,7 @@ include("inc/menu.php");
             <i class="fab fa-whatsapp"></i>
             <div>
                 <h4>WhatsApp</h4>
-                <p><a href="https://wa.me/250791591773">+250 791 591 773</a></p>
+                <p><a href="https://wa.me/250787961006">+250 787 961 006</a></p>
             </div>
         </div>
 
