@@ -21,7 +21,9 @@ include("inc/session.php");
             <li><a href="services.php">Services</a></li>
 
             <?php if(isAdmin()) { ?>
-                <li><a href="view_messages.php" class="admin-link"><i class="fas fa-envelope"></i> Messages</a></li>
+                <li><a href="admin_users.php"><i class="fas fa-users"></i> 👥 Users</a></li>
+                <li><a href="admin_music.php"><i class="fas fa-music"></i> 🎵 Music</a></li>
+                <li><a href="view_messages.php"><i class="fas fa-envelope"></i> 📩 Messages</a></li>
             <?php } ?>
             
             <?php if(isLoggedIn()) { ?>

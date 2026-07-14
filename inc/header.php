@@ -11,12 +11,11 @@
 </head>
 <body>
 
-<!-- ===== TOP BAR (Apple Music Style - Minimal) ===== -->
 <div class="top-bar">
     <div class="top-wrapper">
         <div class="contact-info">
             <span><i class="fas fa-envelope"></i> info@musicstore.com</span>
-            <span><i class="fas fa-phone"></i> +250 791 591 773</span>
+            <span><i class="fas fa-phone"></i> +250 787 961 006</span>
         </div>
         <div class="social-links">
             <a href="#"><i class="fab fa-facebook"></i></a>

@@ -156,5 +156,34 @@ function requireAdmin() {
     }
 }
 
+/**
+ * Check if user is blocked
+ */
+function isUserBlocked($user_id) {
+    global $conn;
+    $sql = "SELECT status FROM users WHERE id = $user_id";
+    $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return isset($row['status']) && $row['status'] == 'blocked';
+}
+
+/**
+ * Check if current user is blocked
+ */
+function isCurrentUserBlocked() {
+    if(!isLoggedIn()) return false;
+    return isUserBlocked(getUserId());
+}
+
+/**
+ * Redirect if user is blocked
+ */
+function requireNotBlocked() {
+    if(isCurrentUserBlocked()) {
+        session_destroy();
+        header("Location: login.php?error=Your account has been blocked");
+        exit();
+    }
+}
 } // END: if (!defined('SESSION_PHP_LOADED'))
 ?>
