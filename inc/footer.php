@@ -1,4 +1,3 @@
-<!-- ===== FOOTER (Apple Music Style - Minimal) ===== -->
 <footer class="footer">
     <div class="footer-wrapper">
         <p>&copy; 2026 Digital Music Store. All rights reserved.</p>

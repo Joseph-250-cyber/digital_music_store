@@ -2,7 +2,6 @@
 include("inc/session.php");
 ?>
 
-<!-- ===== MAIN NAVIGATION ===== -->
 <nav class="main-nav">
     <div class="container">
         <a href="index.php" class="logo">
