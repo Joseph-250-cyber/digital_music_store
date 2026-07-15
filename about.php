@@ -3,7 +3,6 @@ include("inc/header.php");
 include("inc/menu.php");
 ?>
 
-<!-- ===== MAIN CONTENT ===== -->
 <div class="main-wrapper">
     <div class="main-content">
         <h1>📖 About Digital Music Store</h1>

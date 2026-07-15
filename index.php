@@ -12,10 +12,6 @@ $is_logged_in = isLoggedIn();
 $user_id = getUserId();
 $user_role = getUserRole();
 
-// Fetch all music with creator info
-// ============================================================
-// FIX: Added status check - only show active music to non-admins
-// ============================================================
 if(isAdmin()) {
     // Admin sees ALL music (including blocked)
     $sql = "SELECT music.*, users.name as creator_name, users.role as creator_role 
@@ -23,7 +19,6 @@ if(isAdmin()) {
             JOIN users ON music.user_id = users.id 
             ORDER BY music.id DESC";
 } else {
-    // Non-admins only see ACTIVE music
     $sql = "SELECT music.*, users.name as creator_name, users.role as creator_role 
             FROM music 
             JOIN users ON music.user_id = users.id 
@@ -33,12 +28,8 @@ if(isAdmin()) {
 $result = mysqli_query($conn, $sql);
 ?>
 
-<!-- ============================================================ -->
-<!-- APP CONTAINER - WRAPS SIDEBAR + MAIN CONTENT -->
-<!-- ============================================================ -->
 <div class="app-container">
 
-    <!-- ===== LEFT SIDEBAR (Apple Music Style) ===== -->
     <aside class="sidebar-left">
         <div class="sidebar-logo">
             <span class="logo-icon">🎵</span>
@@ -70,9 +61,6 @@ $result = mysqli_query($conn, $sql);
             </ul>
         </nav>
 
-        <!-- ============================================================ -->
-        <!-- ADMIN LINKS - Only visible to Admin -->
-        <!-- ============================================================ -->
         <?php if(isAdmin()) { ?>
             <div class="sidebar-divider"></div>
             <nav class="sidebar-nav">
@@ -86,7 +74,6 @@ $result = mysqli_query($conn, $sql);
 
         <div class="sidebar-divider"></div>
 
-        <!-- User Section -->
         <div class="sidebar-user">
             <?php if($is_logged_in) { ?>
                 <div class="user-info">
@@ -107,10 +94,8 @@ $result = mysqli_query($conn, $sql);
         </div>
     </aside>
 
-    <!-- ===== MAIN CONTENT ===== -->
     <main class="main-content-area">
 
-        <!-- Top Bar with Search -->
         <div class="content-topbar">
             <h1>Home</h1>
             <div class="search-box">
@@ -119,7 +104,6 @@ $result = mysqli_query($conn, $sql);
             </div>
         </div>
 
-        <!-- Success/Error Messages -->
         <?php if(isset($_GET['success'])) { ?>
             <div class="success-message">
                 <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($_GET['success']); ?>
@@ -132,7 +116,6 @@ $result = mysqli_query($conn, $sql);
             </div>
         <?php } ?>
 
-        <!-- ===== FEATURED SECTION ===== -->
         <div class="featured-section">
             <div class="featured-card">
                 <div class="featured-content">
@@ -147,7 +130,6 @@ $result = mysqli_query($conn, $sql);
             </div>
         </div>
 
-        <!-- ===== LATEST RELEASES GRID ===== -->
         <section class="music-section">
             <div class="section-header">
                 <h2>Latest Releases</h2>
@@ -161,9 +143,6 @@ $result = mysqli_query($conn, $sql);
                 <?php if(mysqli_num_rows($result) > 0) { ?>
                     <?php while($row = mysqli_fetch_assoc($result)) { 
                         $is_owner = ($is_logged_in && $row['user_id'] == $user_id);
-                        // ============================================================
-                        // NEW: Check if music is blocked
-                        // ============================================================
                         $is_blocked = isset($row['status']) && $row['status'] == 'blocked';
                     ?>
                         <div class="music-card">
@@ -182,17 +161,11 @@ $result = mysqli_query($conn, $sql);
                                     <span class="genre-badge"><?php echo $row['genre']; ?></span>
                                     <span class="music-price">$<?php echo number_format($row['price'], 2); ?></span>
                                 </div>
-                                
-                                <!-- ============================================================ -->
-                                <!-- AUDIO PLAYER - WITH BLOCKED CHECK -->
-                                <!-- ============================================================ -->
                                 <?php if($is_blocked) { ?>
-                                    <!-- ===== BLOCKED MUSIC: Show locked message ===== -->
                                     <div style="margin-top:8px; font-size:12px; color:#e74c3c; background:#2a1a1a; padding:6px 12px; border-radius:5px; border:1px solid #5a2a2a; text-align:center;">
                                         <i class="fas fa-lock"></i> 🚫 Blocked by Admin
                                     </div>
                                 <?php } elseif(!empty($row['audio_file'])) { ?>
-                                    <!-- ===== ACTIVE MUSIC WITH AUDIO: Show player ===== -->
                                     <div class="audio-player-wrapper">
                                         <audio controls style="width:100%; height:30px; margin-top:8px;">
                                             <source src="audio/<?php echo $row['audio_file']; ?>" type="audio/mpeg">
@@ -200,18 +173,12 @@ $result = mysqli_query($conn, $sql);
                                         </audio>
                                     </div>
                                 <?php } else { ?>
-                                    <!-- ===== ACTIVE MUSIC WITHOUT AUDIO ===== -->
                                     <div class="no-audio" style="margin-top:8px; font-size:11px; color:#666;">
                                         <i class="fas fa-music"></i> No audio uploaded
                                     </div>
                                 <?php } ?>
-                                
-                                <!-- ============================================================ -->
-                                <!-- MUSIC ACTIONS - WITH BLOCK/UNBLOCK FOR ADMIN -->
-                                <!-- ============================================================ -->
                                 <div class="music-actions">
                                     <?php if(isAdmin()) { ?>
-                                        <!-- ===== ADMIN: Full control ===== -->
                                         <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit-sm"><i class="fas fa-edit"></i> Edit</a>
                                         <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete-sm" onclick="return confirm('Delete this music?')"><i class="fas fa-trash"></i> Delete</a>
                                         <?php if($is_blocked) { ?>
@@ -224,17 +191,13 @@ $result = mysqli_query($conn, $sql);
                                             </a>
                                         <?php } ?>
                                     <?php } elseif($is_owner && isArtist()) { ?>
-                                        <!-- ===== ARTIST: Edit/delete own music ===== -->
                                         <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn-edit-sm"><i class="fas fa-edit"></i> Edit</a>
                                         <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn-delete-sm" onclick="return confirm('Delete this music?')"><i class="fas fa-trash"></i> Delete</a>
                                     <?php } elseif(isArtist()) { ?>
-                                        <!-- ===== ARTIST: View others' music ===== -->
                                         <span class="owner-label">🎵 <?php echo $row['creator_name']; ?></span>
                                     <?php } elseif(isListener()) { ?>
-                                        <!-- ===== LISTENER: Listen only ===== -->
                                         <span class="listen-label">🎧 Listen</span>
                                     <?php } else { ?>
-                                        <!-- ===== NOT LOGGED IN: Show login link ===== -->
                                         <span class="login-label">🔒 <a href="login.php" style="color:#f0a500;">Login</a></span>
                                     <?php } ?>
                                 </div>
@@ -254,7 +217,6 @@ $result = mysqli_query($conn, $sql);
             </div>
         </section>
 
-        <!-- ===== GENRE QUICK LINKS ===== -->
         <section class="genre-section">
             <div class="section-header">
                 <h2>Browse by Genre</h2>
@@ -274,6 +236,4 @@ $result = mysqli_query($conn, $sql);
     </main>
 
 </div>
-<!-- ===== END APP CONTAINER ===== -->
-
 <?php require_once("inc/footer.php"); ?>
